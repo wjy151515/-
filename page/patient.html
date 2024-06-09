@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>患者端</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #doctor-list {
+            margin-top: 20px;
+        }
+
+        #doctor-list div {
+            background-color: white;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #doctor-list div:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <section id="search-doctor">
+            <h2>查询空闲医生</h2>
+            <form id="search-form">
+                <label for="date">预约日期:</label>
+                <input type="date" id="date" name="date" required>
+                <label for="department">科室:</label>
+                <select id="department" name="department">
+                    <option value="外科">外科</option>
+                    <option value="内科">内科</option>
+                    <option value="儿科">儿科</option>
+                    <option value="皮肤科">皮肤科</option>
+                </select>
+                <button type="submit">查询</button>
+            </form>
+            <div id="doctor-list"></div>
+        </section>
+
+        <section id="appointment-form" style="display: none;">
+            <h2>预约医生</h2>
+            <form id="appointment">
+                <input type="hidden" id="doctor-id" name="doctor-id">
+                <p>预约医生: <span id="doctor-name"></span></p>
+                <p>预约时间: <span id="time-options"></span></p>
+                <label for="patient-name">患者姓名:</label>
+                <input type="text" id="patient-name" name="patient-name" required>
+                <!-- <label for="appointment-date">预约时间:</label> -->
+                <!-- <input type="time" id="appointment-date" name="appointment-date" required> -->
+                <!-- <input type="text" id="time-options" name="time-options" required> -->
+              <!-- <datalist id="time-options">
+               </datalist> -->
+                <button type="submit">预约</button>
+            </form>
+        </section>
+
+        <!-- <div id="confirmation" style="display: none;">
+            <p>预约成功！医生已经收到通知。</p>
+        </div> -->
+    </div>
+    <script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+
+    <script>
+        layui.use(['layer'], function() {
+            var $ = layui.jquery,
+            form = layui.form,
+            layer = layui.layer;
+            document.getElementById('search-form').addEventListener('submit', function(event){
+                event.preventDefault();
+                var loggedInUsername = localStorage.getItem('loggedInUsername');
+
+                var Date = document.getElementById('date').value;
+            var department = document.getElementById('department').value;
+            var formData = {date:Date,department:department};
+            $.ajax({
+                type:'POST',
+                url:'http://localhost:8080/patient/search',
+                data:formData,
+                success:function(response){
+                console.log(response);
+                console.log(typeof response);
+                if (response.length == 0)
+                {
+                    layer.msg("暂无空闲医生");
+                }
+                else{
+                    layer.msg("查询成功");
+
+                }
+                // var appointments = response.appointments;
+
+                var doctors = response.map(function(item) {
+            var parts = item.split(', ');
+           return {
+            name: parts[0],
+             id: parseInt(parts[1]),
+             time: parts[2],
+            num: parts[3]
+              };
+           });
+            var doctorList = document.getElementById('doctor-list');
+            doctorList.innerHTML = '';
+            
+                // 生成可用医生列表，可点击选择
+            doctors.forEach(doctor => {
+                const doctorDiv = document.createElement('div');
+                doctorDiv.textContent = `姓名：${doctor.name}，id：${doctor.id}，空闲时间：${doctor.time }，剩余人数：${doctor.num}`;
+                doctorDiv.addEventListener('click', () => selectDoctor(doctor));
+                doctorList.appendChild(doctorDiv);
+            });
+            function selectDoctor(doctor) {
+            document.getElementById('doctor-id').value = doctor.id; // 将选中的医生ID设置到隐藏的输入框中
+            document.getElementById('doctor-name').textContent = doctor.name; 
+            document.getElementById('time-options').textContent = doctor.time;
+            document.getElementById('search-doctor').style.display = 'none';
+            document.getElementById('appointment-form').style.display = 'block';
+        }
+        
+          document.getElementById('appointment').addEventListener('submit', function(event) {
+            event.preventDefault();
+           var patientname = document.getElementById('patient-name').value;
+           var time = document.getElementById('time-options').textContent;
+           var doctorname = document.getElementById('doctor-name').textContent;
+          console.log(typeof patientname);
+        
+          console.log(time);
+           var postdata = {date:Date,time:time,patientName:patientname,doctorName:doctorname};
+          console.log(postdata);
+           $.ajax({
+            type:'POST',
+            url:'http://localhost:8080/patient/query',
+            data:postdata,
+            success:function(response){
+                layer.msg('预约成功');
+            },
+            error: function(xhr, status, error) {
+                 layer.msg('失败，请重试');
+            // 处理错误情况
+        }
+           })
+
+        })
+                },
+                error: function(xhr, status, error) {
+                 layer.msg('失败，请重试');
+            // 处理错误情况
+        }
+
+            })
+
+            })
+        })
+//       
+
+
+
+            
+            // 模拟查询空闲医生
+            const doctors = [
+                { id: 1, name: '张医生', department: 'internal-medicine', available: true },
+                { id: 2, name: '李医生', department: 'surgery', available: true },
+                { id: 3, name: '王医生', department: 'pediatrics', available: true },
+                { id: 4, name: '赵医生', department: 'dermatology', available: true },
+                { id: 5, name: '刘医生', department: 'internal-medicine', available: true },
+            ];
+
+        //     // 根据科室和可用状态过滤医生列表
+        //     const filteredDoctors = doctors.filter(doctor => doctor.department === department && doctor.available);
+        //     const doctorList = document.getElementById('doctor-list');
+        //     doctorList.innerHTML = '';
+
+        //     // 生成可用医生列表，可点击选择
+        //     filteredDoctors.forEach(doctor => {
+        //         const doctorDiv = document.createElement('div');
+        //         doctorDiv.textContent = doctor.name;
+        //         doctorDiv.addEventListener('click', () => selectDoctor(doctor));
+        //         doctorList.appendChild(doctorDiv);
+        //     });
+        // });
+
+        // // 点击医生后使用的函数
+        // function selectDoctor(doctor) {
+        //     document.getElementById('doctor-id').value = doctor.id; // 将选中的医生ID设置到隐藏的输入框中
+        //     document.getElementById('doctor-name').textContent = doctor.name; 
+        //     document.getElementById('search-doctor').style.display = 'none';
+        //     document.getElementById('appointment-form').style.display = 'block';
+        // }
+
+        // // 为预约表单添加提交事件的监听器，并阻止表单默认提交行为
+        // document.getElementById('appointment').addEventListener('submit', function(event) {
+        //     event.preventDefault();
+
+        //     // 获取选中的医生ID，患者姓名，预约日期
+        //     const doctorId = document.getElementById('doctor-id').value;
+        //     const patientName = document.getElementById('patient-name').value;
+        //     const appointmentDate = document.getElementById('appointment-date').value;
+        //     // 模拟发送预约信息
+        //     console.log(`预约医生ID: ${doctorId}, 患者姓名: ${patientName}, 预约日期: ${appointmentDate}`);
+        //     document.getElementById('appointment-form').style.display = 'none';
+        //     document.getElementById('confirmation').style.display = 'block';
+        // });
+    </script>
+</body>
+</html>

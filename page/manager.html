@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理员界面</title>
+    <!-- 引入Layui CSS文件 -->
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css">
+</head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo">医院管理系统 - 管理员界面</div>
+        </div>
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;">医生管理</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;" data-target="#query-doctor">查询医生</a></dd>
+                            <dd><a href="javascript:;" data-target="#add-doctor">添加医生</a></dd>
+                            <dd><a href="javascript:;" data-target="#delete-doctor">删除医生</a></dd>
+                            <dd><a href="javascript:;" data-target="#manage-permissions">权限管理</a></dd>
+                        </dl>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="layui-body" style="padding: 20px;">
+
+            <!-- 查询医生 -->
+            <div id="query-doctor" class="layui-tab-item layui-show">
+                <fieldset class="layui-elem-field">
+                    <legend>查询医生</legend>
+                    <div class="layui-field-box">
+                        <form class="layui-form" id="search-doctor-form">
+                            <!-- <div class="layui-form-item">
+                                <label class="layui-form-label">科室</label>
+                                <div class="layui-input-block">
+                                    <select id="department" lay-verify="required">
+                                        <option value="">请选择科室</option>
+                                        <option value="internal-medicine">内科</option>
+                                        <option value="surgery">外科</option>
+                                        <option value="pediatrics">儿科</option>
+                                        <option value="dermatology">皮肤科</option>
+                                    </select>
+                                </div>
+                            </div>-->
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="search-doctor">查询</button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="layui-table" id="doctor-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>名字</th>
+                                    <th>科室</th>
+                                    <th>权限</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- 添加医生 -->
+            <div id="add-doctor" class="layui-tab-item">
+                <fieldset class="layui-elem-field">
+                    <legend>添加医生</legend>
+                    <div class="layui-field-box">
+                        <form class="layui-form" id="add-doctor-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">ID号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="doctor-id" required lay-verify="required" placeholder="请输入医生ID号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">名字</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="doctor-name" required lay-verify="required" placeholder="请输入医生名字" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="doctor-password" required lay-verify="required" placeholder="请输入医生密码" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">科室</label>
+                                <div class="layui-input-block">
+                                    <select id="doctor-department" lay-verify="required">
+                                        <option value="">请选择科室</option>
+                                        <option value="内科">内科</option>
+                                        <option value="外科">外科</option>
+                                        <option value="儿科">儿科</option>
+                                        <option value="皮肤科">皮肤科</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">每小时可接待病人的数目</label>
+                                <div class="layui-input-block">
+                                    <select id="doctor-num" lay-verify="required">
+                                        <option value="">数目</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="add-doctor">添加</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- 删除医生 -->
+            <div id="delete-doctor" class="layui-tab-item">
+                <fieldset class="layui-elem-field">
+                    <legend>删除医生</legend>
+                    <div class="layui-field-box">
+                        <form class="layui-form" id="delete-doctor-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">ID号</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="delete-doctor-id" required lay-verify="required" placeholder="请输入医生ID号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="delete-doctor">删除</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- 权限管理 -->
+            <div id="manage-permissions" class="layui-tab-item">
+                <fieldset class="layui-elem-field">
+                    <legend>权限管理</legend>
+                    <div class="layui-field-box">
+                        <form class="layui-form" id="manage-permissions-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">医生ID</label>
+                                <div class="layui-input-block">
+                                    <input type="text" id="permission-doctor-id" required lay-verify="required" placeholder="请输入医生ID号" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">权限开关</label>
+                                <div class="layui-input-block">
+                                    <input type="checkbox" id="permission-switch" lay-skin="switch" lay-filter="permission-switch">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="update-permissions">更新权限</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Layui JavaScript文件 -->
+    <script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script>
+        layui.use(['jquery','form', 'layer'], function() {
+            var $ = layui.jquery,
+                form = layui.form,
+                layer = layui.layer;
+
+            // 获取所有带有data-target属性的a标签
+            var navLinks = $('a[data-target]');
+
+            // 为每个a标签添加点击事件监听器
+            navLinks.on('click', function(event) {
+                // 阻止默认的链接跳转行为
+                event.preventDefault();
+
+                // 获取a标签的data-target属性值
+                var targetId = $(this).attr('data-target');
+
+                // 根据data-target值，显示或隐藏相应的内容
+                $(targetId).siblings('.layui-tab-item').hide(); // 隐藏其他内容
+                $(targetId).show(); // 显示目标内容
+            });
+
+
+            // 查询医生
+            form.on('submit(search-doctor)', function(data) {
+                $.ajax({
+                    url: 'http://localhost:8080/administrator/list',
+                    type: 'POST',
+                    data: {},
+                    success: function(response) {
+                        var doctorTable = $('#doctor-table tbody');
+                        doctorTable.empty();
+                        response.forEach(function(doctor) {
+                            var doctorFields = doctor.split(', '); // 拆分医生信息字符串
+                            var row = `<tr>
+                                <td>${doctorFields[1]}</td> <!-- ID -->
+                                <td>${doctorFields[0]}</td> <!-- 姓名 -->
+                                <td>${doctorFields[2]}</td> <!-- 科室 -->
+                                <td>${doctorFields[4] == 'true' ? '有权限' : '无权限'}</td> <!-- 权限 -->
+                            </tr>`;
+                            console.log(doctorFields[1]);
+                            console.log(doctorFields[4]);
+
+                            doctorTable.append(row);
+                        });
+                        layer.msg('查询成功');
+                    },
+                    error: function(xhr, status, error) {
+                        layer.msg('查询失败，请重试');
+                    }
+                });
+                return false; // 阻止表单跳转
+            });
+
+            // 添加医生
+            form.on('submit(add-doctor)', function(data) {
+                var id = document.getElementById('doctor-id').value;
+                var name = document.getElementById('doctor-name').value;
+                var password = document.getElementById('doctor-password').value;
+                var department = document.getElementById('doctor-department').value;
+                var num = document.getElementById('doctor-num').value;
+                var formData = {
+                    id: parseInt(id),
+                    name: name,
+                    password:password,
+                    department: department,
+                    maxAppointmentsPerHour:num,
+                    permission:true
+                };
+                console.log(formData);
+                $.ajax({
+                    url: 'http://localhost:8080/administrator/add',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        layer.msg('医生添加成功');
+
+                    },
+                    error: function(xhr, status, error) {
+                        layer.msg('添加失败，请重试');
+                    }
+                });
+                return false; // 阻止表单跳转
+            });
+
+            // 删除医生
+            form.on('submit(delete-doctor)', function(data) {
+                var doctorId = document.getElementById('delete-doctor-id').value;
+                $.ajax({
+                    url: 'http://localhost:8080/administrator/del',
+                    type: 'POST',
+                    data: { id: doctorId },
+                    success: function(response) {
+                        layer.msg('医生删除成功');
+                    },
+                    error: function(xhr, status, error) {
+                        layer.msg('删除失败，请重试');
+                    }
+                    });
+                    return false; // 阻止表单跳转
+                });
+    
+                // 更新权限
+                form.on('submit(update-permissions)', function(data) {
+                    var doctorId = document.getElementById('permission-doctor-id').value;
+                    var permissionSwitch = document.getElementById('permission-switch');
+                    var permission = permissionSwitch.checked ? 1 : 0;
+                    console.log(permission);
+                    $.ajax({
+                        url: 'http://localhost:8080/administrator/permission',
+                        type: 'POST',
+                        data: { id: parseInt(doctorId), val: parseInt(permission) },
+                        success: function(response) {
+                            layer.msg('权限更新成功');
+                        },
+                        error: function(xhr, status, error) {
+                            layer.msg('权限更新失败，请重试');
+                        }
+                    });
+                    return false; // 阻止表单跳转
+                });
+    
+            });
+        </script>
+    </body>
+    </html>
+    
