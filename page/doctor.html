@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医生界面</title>
+    <!-- 引入layui样式 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/layui/2.6.8/css/layui.css">
+    <style>
+        /* 自定义样式 */
+        .container {
+            margin: 20px;
+        }
+        .notification {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .notification-content {
+            color: #666;
+        }
+        .setting {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .setting-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .setting-option {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 消息通知 -->
+        <div class="notification">
+            <div class="notification-title">消息通知</div>
+            <div class="notification-content">
+                您有新的预约请求，请及时处理。
+            </div>
+        </div>
+        
+        <!-- 空闲时间设置 -->
+        <div class="setting">
+            <div class="setting-title">空闲时间设置</div>
+            <div class="setting-option">
+                <label>开始时间：</label>
+                <input type="time" id="startTime">
+            </div>
+            <div class="setting-option">
+                <label>结束时间：</label>
+                <input type="time" id="endTime">
+            </div>
+            <div class="setting-option">
+                <button class="layui-btn layui-btn-normal" id="saveTimeBtn">保存</button>
+            </div>
+        </div>
+        
+        <!-- 可接待病人的数目设置 -->
+        <div class="setting">
+            <div class="setting-title">可接待病人的数目设置</div>
+            <div class="setting-option">
+                <label>选择数目：</label>
+                <select id="treeSelect">
+                    <option value="1">数目1</option>
+                    <option value="2">数目2</option>
+                    <option value="3">数目3</option>
+                </select>
+            </div>
+            <div class="setting-option">
+                <button class="layui-btn layui-btn-normal" id="saveTreeBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入layui.js -->
+    <script src="https://cdn.staticfile.org/layui/2.6.8/layui.js"></script>
+    <script>
+        layui.use(['layer'], function() {
+            var layer = layui.layer;
+
+            // 保存空闲时间按钮点击事件
+            document.getElementById('saveTimeBtn').onclick = function() {
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+
+                // 这里可以将开始时间和结束时间发送到服务器保存
+                layer.msg('空闲时间已保存');
+            };
+
+            // 保存可接待病人的树木按钮点击事件
+            document.getElementById('saveTreeBtn').onclick = function() {
+                var treeSelected = document.getElementById('treeSelect').value;
+
+                // 这里可以将选中的树木信息发送到服务器保存
+                layer.msg('树木设置已保存');
+            };
+        });
+    </script>
+</body>
+</html>
